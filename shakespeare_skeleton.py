@@ -10,7 +10,7 @@ Preprocess corpus
 '''
 def preprocess(corpus):
 
-    with open("shakespeare/j_caesar.xml") as f:
+    with open("j_caesar.xml") as f:
         script = f.read()
 
     script = script.split("\n")
@@ -33,11 +33,16 @@ class UnigramModel():
 
     # Add observed counts from corpus to the distribution
     def train(self, corpus):
-        pass
+        for sentence in corpus:
+            for word in sentence.split(" "):
+                if word == START_TAG:
+                    continue
+                self.counts[word] += 1.0;
+                self.total += 1.0;
 
     # Returns the probability of word in the distribution
     def prob(self, word):
-        pass
+        return self.counts[word] / self.total
 
     # Generate a single random word according to the distribution
     def draw(self):
@@ -48,7 +53,14 @@ class UnigramModel():
                     return word
 
     def generateSentence(self):
-        pass
+        sentence = [START_TAG]
+        word = START_TAG
+        while word != END_TAG:
+            word = self.draw()
+            sentence.append(word)
+
+        sentence = " ".join(sentence)
+        return sentence
 
 '''
 Bigram language model
@@ -92,8 +104,8 @@ def main():
     uni = UnigramModel(corpus)
     print(uni.generateSentence())
 
-    bi = BigramModel(corpus)
-    print(bi.generateSentence())
+    # bi = BigramModel(corpus)
+    # print(bi.generateSentence())
 
 
 if __name__ == "__main__":
